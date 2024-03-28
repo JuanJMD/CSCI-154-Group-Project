@@ -1,0 +1,12 @@
+Field Title,Field Name,Data Type,Description
+Year,Year,Number,Four-digit year in which the event occurred.
+Month,Month,Number,Two-digit month in which the event occurred. Records without valid months are excluded. The sum of counts by month for a given year may not equal the annual count.
+County Name,County,Plain Text,Name of county for geography.
+Geography Type,Geography_Type,Plain Text,"Whether the geography is based on the place of residence or place of occurrence. A geography type of Residence includes events for California residents even if they occurred outside of California, whereas a geography type of Occurrence includes events that occurred within California even if they were not California residents."
+Strata,Strata,Plain Text,"General demographic or detail category under which events have been stratified. For example, Race-Ethnicity or Sex. Will be Total Population if there is no stratification."
+Strata Name,Strata_Name,Plain Text,"Individual strata within the general demographic or detail category. For example, Hispanic or Female. Will be Total Population if there is no stratification."
+Count,Count,Number,"Count of events. If blank, see annotation for more information."
+Annotation Code,Annotation_Code,Plain Text,Annotation code for count as single digit: blank = no annotation; 1 = cell suppressed for small numbers; 2 = cell suppressed for complementary cell; 3 = no data is available; 4 = statistically unstable value.
+Annotation Description,Annotation_Desc,Plain Text,Descriptive text for the data annotation.
+Data Extraction Date,Data_Extract_Date,Date,"For provisional data, date when the data was extracted (MM/DD/YYYY). Provisional counts are based on the data available when the data was extracted and may not represent all events that occurred during the time period."
+Data Revision Date,Data_Revision_Date,Date,Date data was created or revised (MM/DD/YYYY).
