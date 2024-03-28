@@ -19,7 +19,7 @@ def rateCalc(lst):
 
     return rateValue
 
-
+# logistic function has DUMMY values, not actual values
 def logistic(rate):
     l = 5000
     k = rate
