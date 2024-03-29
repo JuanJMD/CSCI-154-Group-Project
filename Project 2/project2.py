@@ -37,7 +37,6 @@ def logistic(rate):
     for i in xRange:
         res = l/(1 + ((inclPopulation) * (math.e)**(-k * (i - x0))))
         container.append(res)
-        print(i, res)
     return [container, xRange]
 
 ### MAIN ###
