@@ -4,6 +4,7 @@
 
 import pandas as pd
 import math
+import matplotlib.pyplot as plt
 
 def rateCalc(lst):
     storage = []
@@ -21,15 +22,18 @@ def rateCalc(lst):
 
 # logistic function has DUMMY values, not actual values
 def logistic(rate):
-    l = 5000
+    l = 5000000
     k = rate
     x = 0
     x0 = 0
     equation = l/(1 + (math.e)**(-k * (x - x0)))
 
-    for i in range(60):
+    container = []
+    for i in range(10):
         res = l/(1 + (math.e)**(-k * (i - x0)))
-        print(res)
+        container.append(res)
+
+    return container
 
 ### MAIN ###
         
@@ -49,4 +53,7 @@ deathRate = rateCalc(dCount)
 print(f"The birth Rate: {birthRate}")
 print(f"The death Rate: {deathRate}")
 
-logistic(birthRate)
+dataRes = logistic(deathRate)
+
+plt.plot(dataRes)
+plt.show()
