@@ -7,6 +7,24 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
+def getRate(num, population):
+    rates = []
+    for i in range(len(num)):
+        getBirth = num[i]
+        getPopSize = population[i]
+
+        print(f"{getBirth}/{getPopSize}")
+
+        rates.append(getBirth/getPopSize)
+
+    averageRate = sum(rates)/len(num)
+
+    print("== == ==")
+
+    return averageRate
+
+
+
 def rateCalc(lst):
     storage = []
     for i in range(len(lst) - 1):
@@ -27,7 +45,7 @@ def logistic(rate):
     k = rate
     x = 0
     x0 = 0
-    initPop = 789405
+    initPop = 1015190
     inclPopulation = (l - initPop) / initPop
     
     container = []
@@ -45,20 +63,47 @@ def logistic(rate):
 birthData = pd.read_csv('data/modified/Births.csv')
 deathData = pd.read_csv('data/modified/Deaths.csv')
 
+df = pd.read_csv('data/modified/Fresno County Annual Population data.csv', parse_dates=['DATE'])
+
 # Extracts it into lists
 [year, bCount, dCount] = [birthData['Year'].tolist(), birthData['Count'].tolist(), deathData['Count'].tolist()]
 
-print(len(bCount))
+popData = df[df['DATE'].dt.year > 1998]
 
+[populationDates, populationNums] = [popData['DATE'].tolist(), popData['CAFRES9POP'].tolist()]
+popValues = [int(str(num).replace('.', '')) for num in populationNums]
+
+
+birthRate = getRate(bCount, popValues)
+deathRate = getRate(dCount, popValues)
 # Calculates birth & death rate
-birthRate = rateCalc(bCount)
-deathRate = rateCalc(dCount)
+#birthRate = rateCalc(bCount)
+#deathRate = rateCalc(dCount)
 
 print(f"The birth Rate: {birthRate}")
 print(f"The death Rate: {deathRate}")
 
-[dataRes, xDeathRange] = logistic(deathRate)
+rateVal = birthRate - deathRate
 
-plt.plot(xDeathRange, dataRes)
+print(f"RATE VAL = {rateVal}")
+
+
+[dataResults, xRange] = logistic(rateVal)
+
+plt.plot(xRange, dataResults)
 plt.yticks(np.arange(1, 2000001, step=500000))
 plt.show()
+
+# Death Graph
+#[death_data_results, xDeathRange] = logistic(deathRate)
+
+#plt.plot(xDeathRange, death_data_results)
+#plt.yticks(np.arange(1, 2000001, step=500000))
+#plt.show()
+
+# Birth Graph
+#[birth_data_results, xBirthRange] = logistic(birthRate)
+
+#plt.plot(xBirthRange, birth_data_results)
+#plt.yticks(np.arange(1, 2000001, step=500000))
+#plt.show()
