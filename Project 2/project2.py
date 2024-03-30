@@ -13,17 +13,10 @@ def getRate(num, population):
         getBirth = num[i]
         getPopSize = population[i]
 
-        print(f"{getBirth}/{getPopSize}")
-
         rates.append(getBirth/getPopSize)
 
     averageRate = sum(rates)/len(num)
-
-    print("== == ==")
-
     return averageRate
-
-
 
 def rateCalc(lst):
     storage = []
@@ -57,53 +50,44 @@ def logistic(rate):
         container.append(res)
     return [container, xRange]
 
-### MAIN ###
-        
-# Reads Data in
-birthData = pd.read_csv('data/modified/Births.csv')
-deathData = pd.read_csv('data/modified/Deaths.csv')
+# Logistic Function with Human Population
+def logisticsHumanPop():
+    # Reads Data in
+    birthData = pd.read_csv('data/modified/Births.csv')
+    deathData = pd.read_csv('data/modified/Deaths.csv')
 
-df = pd.read_csv('data/modified/Fresno County Annual Population data.csv', parse_dates=['DATE'])
+    df = pd.read_csv('data/modified/Fresno County Annual Population data.csv', parse_dates=['DATE'])
 
-# Extracts it into lists
-[year, bCount, dCount] = [birthData['Year'].tolist(), birthData['Count'].tolist(), deathData['Count'].tolist()]
+    # Extracts it into lists
+    [year, bCount, dCount] = [birthData['Year'].tolist(), birthData['Count'].tolist(), deathData['Count'].tolist()]
 
-popData = df[df['DATE'].dt.year > 1998]
+    popData = df[df['DATE'].dt.year > 1998]
 
-[populationDates, populationNums] = [popData['DATE'].tolist(), popData['CAFRES9POP'].tolist()]
-popValues = [int(str(num).replace('.', '')) for num in populationNums]
+    [populationDates, populationNums] = [popData['DATE'].tolist(), popData['CAFRES9POP'].tolist()]
+    popValues = [int(str(num).replace('.', '')) for num in populationNums]
+
+    # Calculate Birth and Death Rate
+    birthRate = getRate(bCount, popValues)
+    deathRate = getRate(dCount, popValues)
+
+    # Calculates overall Rate
+    rateVal = birthRate - deathRate
+
+    print(f"The birth Rate: {birthRate}")
+    print(f"The death Rate: {deathRate}")
+    print(f"RATE VAL = {rateVal}")
+
+    # Calculates Logistic Equation
+    [dataResults, xRange] = logistic(rateVal)
+
+    # Graphs Data
+    plt.plot(xRange, dataResults)
+    plt.yticks(np.arange(1, 2000001, step=500000))
+    plt.show()
 
 
-birthRate = getRate(bCount, popValues)
-deathRate = getRate(dCount, popValues)
-# Calculates birth & death rate
-#birthRate = rateCalc(bCount)
-#deathRate = rateCalc(dCount)
+def main():
+    logisticsHumanPop()
 
-print(f"The birth Rate: {birthRate}")
-print(f"The death Rate: {deathRate}")
-
-rateVal = birthRate - deathRate
-
-print(f"RATE VAL = {rateVal}")
-
-
-[dataResults, xRange] = logistic(rateVal)
-
-plt.plot(xRange, dataResults)
-plt.yticks(np.arange(1, 2000001, step=500000))
-plt.show()
-
-# Death Graph
-#[death_data_results, xDeathRange] = logistic(deathRate)
-
-#plt.plot(xDeathRange, death_data_results)
-#plt.yticks(np.arange(1, 2000001, step=500000))
-#plt.show()
-
-# Birth Graph
-#[birth_data_results, xBirthRange] = logistic(birthRate)
-
-#plt.plot(xBirthRange, birth_data_results)
-#plt.yticks(np.arange(1, 2000001, step=500000))
-#plt.show()
+if __name__ == "__main__":
+    main()
