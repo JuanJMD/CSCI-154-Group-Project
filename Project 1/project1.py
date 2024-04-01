@@ -1,80 +1,96 @@
-import random
+import secrets
 
 class door:
     doorID = 0
     hasGoat = False
     car = False
-    isOpen = False
-
-numDoors = int(input("How many doors: "))
+    
+#empty door array
 doorMatrix = []
 
 # Creates n-amount of doors
-for row in range(1, numDoors + 1):
-    dummyDoor = door()
-    dummyDoor.doorID = row
-    dummyDoor.goat = True
-    doorMatrix.append(dummyDoor)
+def doorCreation(numDoors):
+    for row in range(1, numDoors + 1):
+        dummyDoor = door()
+        dummyDoor.doorID = row
+        dummyDoor.hasGoat = True
+        doorMatrix.append(dummyDoor)
+    return doorMatrix
 
 # Places Car randomly
-getDoor = random.choice(doorMatrix)
-getDoor.goat = False
-getDoor.car = True
+def placeCar(doorMatrix):
+    carDoor = secrets.choice(doorMatrix)
+    carDoor.hasGoat = False
+    carDoor.car = True
+    return carDoor.doorID
 
-def userChoosen(numDoors):
-    cDoor = int(input(f"Choose a door number from 1 - {numDoors}: "))
-    return cDoor
+def userFirstChoice(doorMatrix):
+    #using random number to simulate user choice
+    userDoor = secrets.choice(doorMatrix)
+    return userDoor.doorID
 
-# Function for filter in hostChooses Function
-def excludeUserDoor(userDoorVal):
-    def filter_function(val):
-        return val != userDoorVal
-    return filter_function
-
-def hostChooses(numDoors, doorMatrix, userDoor):
-    chosen = False
-    iterator = 0
-
-    # Host knows everything, therefore check what the user
-    # has behind their door.
-    isCarChosen = False
-    if userDoor.car == True:
-        isCarChosen = True
-
-    # New list created with user's door removed
-    filteredDoors = list(filter(excludeUserDoor(userDoor.doorID), doorMatrix))
-
-    # If the car door was chosen by the user
-    if isCarChosen:
-        # Choose a door from the filtered doors
-        generatedDoor = random.choice(filteredDoors)
+#If user always switches the door, we only need to consider if user's first choice contains a car 
+#If yes, switching always win
+#Otherwise, switching always lose
+def alwaysSwitch(userDoor,carDoor):
+    if(userDoor == carDoor):
+        return False
     else:
-        # If car door was not chosen, find it and choose it
-        i = 0
-        while i < len(filteredDoors) and not isCarChosen:
-            if filteredDoors[i].car == True:
-                generatedDoor = filteredDoors[i]
-            i += 1
+        return True
 
-    return generatedDoor
+#If user always stays and the first choice contains a car, the user wins. Otherwise, the user loses
+def alwaysStay(userDoor, carDoor):
+    if(userDoor == carDoor):
+        return True
+    else:
+        return False
 
-def montyHall(numDoors, m):
-    # Gets the User's chosen door
-    userDoor_value = userChoosen(numDoors)
-    userDoor = m[userDoor_value - 1]
+def montyHall(numDoors, rule):
+    if not numDoors:
+        return
+    
+    #game initializaton
+    doorMatrix=doorCreation(numDoors)
 
-    # Gets the game host's chosen door
-    hostDoor = hostChooses(numDoors, doorMatrix, userDoor)
+    #get the cardoor
+    carDoor = placeCar(doorMatrix)
 
-    counter = 0
-    # Swap to other door
-    # STILL IN THE WORKS
-    for i in range(numDoors + 1):
+    # User's first choice
+    userDoor = userFirstChoice(doorMatrix)
 
-        hostDoor = hostChooses(numDoors, doorMatrix, userDoor)
-        if hostDoor.car == True:
-            counter += 1
+    #Update rule choices
+    if rule==1:
+        result = alwaysSwitch(userDoor,carDoor)
+    else:
+        result = alwaysStay(userDoor,carDoor)
+    
+    return result
 
-    print(counter)
+numDoors = int(input("How many doors for the game: "))
+times = int(input("Simulation times: "))
 
-montyHall(numDoors, doorMatrix)
+countWin1 = 0
+countLose1 = 0
+#Always Switching Case:
+for x in range(times+1):
+    if (montyHall(numDoors, 1)):
+        countWin1 +=1
+    else:
+        countLose1 +=1
+
+print("Win: ", countWin1)
+print("Lose: ", countLose1)
+print("Always Switching Win probability: ", countWin1/times)
+
+#Always Staying Case:
+countWin2 = 0
+countLose2 = 0
+for x in range(times+1):
+    if (montyHall(numDoors,2)):
+        countWin2 +=1
+    else:
+        countLose2 +=1
+
+print("Win: ", countWin2)
+print("Lose: ", countLose2)
+print("Always Staying Win probability: ", countWin2/times)
