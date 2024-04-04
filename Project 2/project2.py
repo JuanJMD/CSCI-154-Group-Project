@@ -42,7 +42,8 @@ def logistic(rate):
     inclPopulation = (L - initPop) / initPop
     
     container = []
-    xRange = np.arange(-500, 501, 1)
+    #xRange = np.arange(-500, 501, 1)
+    xRange = np.arange(0, 1001, 1)
 
 
     for i in xRange:
@@ -79,26 +80,29 @@ def plotter(equation1, linps1, equation2, linps2):
 
     axis[0].plot(linps1, equation1, 'b')
     axis[0].set_title("Malthsian Model")
-    
+    axis[0].grid(True, linestyle =':')
+
+
     axis[1].plot(linps1, equation1, 'b', label = 'Malthusian Model')
     axis[1].plot(linps2, equation2, 'r', label = 'Logistic Model')
+    axis[1].grid(True, linestyle =':')
     axis[1].set_xlim([0, xEnd])
-    axis[1].set_ylim([0, 3050000])
+    axis[1].set_ylim([1000000, 3050000])
     axis[1].legend()
-    
-    # axis[1].relim([xStart, xEnd])
-    # axis[1].relim([1000000, 3050000])
-    # axis[1].xticks(np.arange(xStart, xEnd, step=25))
 
+    plt.grid(True, linestyle =':')
+    plt.xlabel('Years')
+    plt.ylabel('Population')
 
     axis[2].plot(linps2, equation2, 'r')
     axis[2].set_title("Logistic Model")
+
     
     
     #plt.plot(linps1, equation1, 'b', label = 'Malthusian Model')
     #plt.plot(linps2, equation2, 'r', label = 'Logistic Model')
     
-    plt.legend()
+    #plt.legend()
     plt.grid(True, linestyle =':')
 
     plt.xlabel('Years')
