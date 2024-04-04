@@ -51,7 +51,63 @@ def logistic(rate):
     return [container, xRange]
 
 # Logistic Function with Human Population
-def logisticsHumanPop():
+def logisticsHumanPop(rate):
+    # Calculates Logistic Equation
+    [dataResults, xRange] = logistic(rate)
+
+    # Graphs Data
+    # plt.plot(xRange, dataResults)
+    # plt.yticks(np.arange(1, 2000001, step=500000))
+    # plt.show()
+    
+    return [dataResults, xRange]
+
+def malthusianModel(rate):
+    p_0 = 1015190
+    t = np.linspace(-1, 400, 10000000)
+    y = p_0 * (math.e ** (rate * t))
+
+    return [y, t]
+
+
+def plotter(equation1, linps1, equation2, linps2):
+    
+    xStart = -100
+    xEnd = 100
+    
+    figure, axis = plt.subplots(1, 3)
+
+    axis[0].plot(linps1, equation1, 'b')
+    axis[0].set_title("Malthsian Model")
+    
+    axis[1].plot(linps1, equation1, 'b', label = 'Malthusian Model')
+    axis[1].plot(linps2, equation2, 'r', label = 'Logistic Model')
+    axis[1].set_xlim([0, xEnd])
+    axis[1].set_ylim([0, 3050000])
+    axis[1].legend()
+    
+    # axis[1].relim([xStart, xEnd])
+    # axis[1].relim([1000000, 3050000])
+    # axis[1].xticks(np.arange(xStart, xEnd, step=25))
+
+
+    axis[2].plot(linps2, equation2, 'r')
+    axis[2].set_title("Logistic Model")
+    
+    
+    #plt.plot(linps1, equation1, 'b', label = 'Malthusian Model')
+    #plt.plot(linps2, equation2, 'r', label = 'Logistic Model')
+    
+    plt.legend()
+    plt.grid(True, linestyle =':')
+
+    plt.xlabel('Years')
+    plt.ylabel('Population')
+
+    plt.show()
+
+
+def main():
     # Reads Data in
     birthData = pd.read_csv('data/modified/Births.csv')
     deathData = pd.read_csv('data/modified/Deaths.csv')
@@ -77,17 +133,11 @@ def logisticsHumanPop():
     print(f"The death Rate: {deathRate}")
     print(f"RATE VAL = {rateVal}")
 
-    # Calculates Logistic Equation
-    [dataResults, xRange] = logistic(rateVal)
 
-    # Graphs Data
-    plt.plot(xRange, dataResults)
-    plt.yticks(np.arange(1, 2000001, step=500000))
-    plt.show()
+    [l_eq, l_range] = logisticsHumanPop(rateVal)
+    [m_eq, m_range] = malthusianModel(rateVal)
 
-
-def main():
-    logisticsHumanPop()
+    plotter(m_eq, m_range, l_eq, l_range)
 
 if __name__ == "__main__":
     main()
