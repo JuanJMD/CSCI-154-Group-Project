@@ -34,19 +34,19 @@ def rateCalc(lst):
 
 # logistic function has DUMMY values, not actual values
 def logistic(rate):
-    l = 2000000
+    L = 2000000
     k = rate
     x = 0
     x0 = 0
     initPop = 1015190
-    inclPopulation = (l - initPop) / initPop
+    inclPopulation = (L - initPop) / initPop
     
     container = []
     xRange = np.arange(-500, 501, 1)
 
 
     for i in xRange:
-        res = l/(1 + ((inclPopulation) * (math.e)**(-k * (i - x0))))
+        res = L/(1 + ((inclPopulation) * (math.e)**(-k * (i - x0))))
         container.append(res)
     return [container, xRange]
 
