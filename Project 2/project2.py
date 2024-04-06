@@ -7,6 +7,7 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
+# Obtains the Population Rate
 def getRate(num, population):
     rates = []
     for i in range(len(num)):
@@ -18,33 +19,17 @@ def getRate(num, population):
     averageRate = sum(rates)/len(num)
     return averageRate
 
-def rateCalc(lst):
-    storage = []
-    for i in range(len(lst) - 1):
-        diff = (lst[i + 1] / lst[i]) - 1
-        storage.append(diff)
-
-    summation = 0
-    for i in storage:
-        summation += i
-    
-    rateValue = summation/len(storage)
-
-    return rateValue
-
-# logistic function has DUMMY values, not actual values
+# Creates Logistic Function
 def logistic(rate):
     L = 2000000
     k = rate
     x = 0
     x0 = 0
-    initPop = 1015190
+    initPop = 828051
     inclPopulation = (L - initPop) / initPop
     
     container = []
-    #xRange = np.arange(-500, 501, 1)
-    xRange = np.arange(0, 1001, 1)
-
+    xRange = np.arange(0, 41, 1)
 
     for i in xRange:
         res = L/(1 + ((inclPopulation) * (math.e)**(-k * (i - x0))))
@@ -56,74 +41,99 @@ def logisticsHumanPop(rate):
     # Calculates Logistic Equation
     [dataResults, xRange] = logistic(rate)
 
-    # Graphs Data
-    # plt.plot(xRange, dataResults)
-    # plt.yticks(np.arange(1, 2000001, step=500000))
-    # plt.show()
-    
     return [dataResults, xRange]
 
 def malthusianModel(rate):
-    p_0 = 1015190
-    t = np.linspace(-1, 400, 10000000)
+    p_0 = 828051
+    t = np.arange(0, 41, 1)
     y = p_0 * (math.e ** (rate * t))
 
     return [y, t]
 
+def plotter(equation1, linps1, equation2, linps2, rawData):
+    xEnd = 40
 
-def plotter(equation1, linps1, equation2, linps2):
-    
-    xStart = -100
-    xEnd = 100
-    
-    figure, axis = plt.subplots(1, 3)
+    # Plots the Malthusian Model
+    fig1, ax1 = plt.subplots()
+    ax1.plot(linps1, equation1, 'b')
+    ax1.set_title("Malthusian Model")
+    ax1.grid(True, linestyle=':')
+    ax1.set_xlim([0, xEnd])
+    ax1.set_xlabel("Years")
+    ax1.set_ylabel("Population")
+    ax1.set_xticks(np.linspace(0, 40, 40))
+    ax1.set_xticklabels(np.linspace(2002, 2042, 40, dtype=int), rotation=45)
 
-    axis[0].plot(linps1, equation1, 'b')
-    axis[0].set_title("Malthsian Model")
-    axis[0].grid(True, linestyle =':')
+    # All combined Models
+    fig2, ax2 = plt.subplots()
+    ax2.plot(linps1, equation1, 'b', label='Malthusian Model')
 
+    xPoints = list(range(len(rawData)))
+    ax2.scatter(xPoints, rawData, label='Fresno County Annual Population Data')
 
-    axis[1].plot(linps1, equation1, 'b', label = 'Malthusian Model')
-    axis[1].plot(linps2, equation2, 'r', label = 'Logistic Model')
-    axis[1].grid(True, linestyle =':')
-    axis[1].set_xlim([0, xEnd])
-    axis[1].set_ylim([1000000, 3050000])
-    axis[1].legend()
+    # Plots Points with Numerical Value
+    #for i in range(len(xPoints)):
+    #    ax2.annotate((str(xPoints[i]) + ', ' + str(rawData[i])), (xPoints[i], rawData[i]))
 
-    plt.grid(True, linestyle =':')
-    plt.xlabel('Years')
-    plt.ylabel('Population')
+    ax2.plot(linps2, equation2, 'r', label='Logistic Model')
+    ax2.grid(True, linestyle=':')
+    ax2.set_xlim([0, xEnd])
+    ax2.set_xlabel("Years")
+    ax2.set_ylabel("Population")
+    ax2.set_xticks(np.linspace(0, 40, 40))
+    ax2.set_xticklabels(np.linspace(2002, 2042, 40, dtype=int), rotation=45)
+    ax2.legend()
 
-    axis[2].plot(linps2, equation2, 'r')
-    axis[2].set_title("Logistic Model")
+    # Plots the Logistic Model
+    fig3, ax3 = plt.subplots()
+    ax3.plot(linps2, equation2, 'r')
+    ax3.set_title("Logistic Model")
+    ax3.grid(True, linestyle=':')
+    ax3.set_xlim([0, xEnd])
+    ax3.set_xlabel("Years")
+    ax3.set_ylabel("Population")
+    ax3.set_xticks(np.linspace(0, 40, 40))
+    ax3.set_xticklabels(np.linspace(2002, 2042, 40, dtype=int), rotation=45)
 
-    
-    
-    #plt.plot(linps1, equation1, 'b', label = 'Malthusian Model')
-    #plt.plot(linps2, equation2, 'r', label = 'Logistic Model')
-    
-    #plt.legend()
-    plt.grid(True, linestyle =':')
+    # Plots Chart
+    fig4 = plt.figure()
+    ax4 = fig4.add_subplot(111)
+    tableColNames = ['Malthusian Model', 'Logistic Model', 'Raw Data']
+    tData = []
 
-    plt.xlabel('Years')
-    plt.ylabel('Population')
+    for i in range(len(rawData)):
+        tData.append([format(equation1[i], '.1f'), format(equation2[i], '.1f'), format(rawData[i], '.1f')])
 
+    table = ax4.table(cellText=tData, loc='center',
+                      colLabels=tableColNames, cellLoc='center', fontsize='20')
+    table.auto_set_font_size(False)
+    #table.set_fontsize(8)  # Adjust font size as needed
+    ax4.axis('off')
+    for j, col_label in enumerate(tData[0]):
+        table[(0, j)].set_facecolor('lightblue')
     plt.show()
 
 
 def main():
     # Reads Data in
-    birthData = pd.read_csv('data/modified/Births.csv')
-    deathData = pd.read_csv('data/modified/Deaths.csv')
+    birthData = pd.read_csv('data/modified/Births.csv', parse_dates=['Year'])
+    deathData = pd.read_csv('data/modified/Deaths.csv', parse_dates=['Year'])
+
+    birthData = birthData[birthData['Year'].dt.year > 2001]
+    deathData = deathData[deathData['Year'].dt.year > 2001]
+
 
     df = pd.read_csv('data/modified/Fresno County Annual Population data.csv', parse_dates=['DATE'])
 
     # Extracts it into lists
     [year, bCount, dCount] = [birthData['Year'].tolist(), birthData['Count'].tolist(), deathData['Count'].tolist()]
 
-    popData = df[df['DATE'].dt.year > 1998]
+    popData = df[df['DATE'].dt.year > 2001]
 
     [populationDates, populationNums] = [popData['DATE'].tolist(), popData['CAFRES9POP'].tolist()]
+    for i in range(len(populationNums)):
+        populationNums[i] = "{0:.3f}".format(populationNums[i])
+
     popValues = [int(str(num).replace('.', '')) for num in populationNums]
 
     # Calculate Birth and Death Rate
@@ -132,16 +142,12 @@ def main():
 
     # Calculates overall Rate
     rateVal = birthRate - deathRate
-
-    print(f"The birth Rate: {birthRate}")
-    print(f"The death Rate: {deathRate}")
-    print(f"RATE VAL = {rateVal}")
-
+    print('rate:', rateVal)
 
     [l_eq, l_range] = logisticsHumanPop(rateVal)
     [m_eq, m_range] = malthusianModel(rateVal)
 
-    plotter(m_eq, m_range, l_eq, l_range)
+    plotter(m_eq, m_range, l_eq, l_range, popValues)
 
 if __name__ == "__main__":
     main()
