@@ -21,7 +21,10 @@ def getRate(num, population):
 
 # Creates Logistic Function
 def logistic(rate):
-    L = 2000000
+    areaFresno=5958.4
+    areaUS=3797000
+    USCap = 807000000
+    L = USCap*(areaFresno/areaUS)
     k = rate
     x = 0
     x0 = 0
@@ -139,6 +142,7 @@ def main():
     # Calculate Birth and Death Rate
     birthRate = getRate(bCount, popValues)
     deathRate = getRate(dCount, popValues)
+    print(f"{birthRate=},{deathRate=}")
 
     # Calculates overall Rate
     rateVal = birthRate - deathRate
@@ -148,6 +152,7 @@ def main():
     [m_eq, m_range] = malthusianModel(rateVal)
 
     plotter(m_eq, m_range, l_eq, l_range, popValues)
+
 
 if __name__ == "__main__":
     main()
