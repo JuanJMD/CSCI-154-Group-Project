@@ -104,14 +104,11 @@ def plotter(equation1, linps1, equation2, linps2, rawData):
     tableColNames = ['Malthusian Model', 'Logistic Model', 'Raw Data', 'M - R Diff', 'L - R Diff']
     tData = []
 
-
-
+    # Adds data to table
     for i in range(len(rawData)):
         rmDiff = format((float(format(rawData[i], '.1f')) -  float(format(equation1[i], '.1f'))), '.1f')
         rlDiff = format((float(format(rawData[i], '.1f')) -  float(format(equation2[i], '.1f'))), '.1f')
-
         tData.append([format(equation1[i], '.1f'), format(equation2[i], '.1f'), format(rawData[i], '.1f'), rmDiff, rlDiff]) 
-
 
     table = ax4.table(cellText=tData, loc='center',
                       colLabels=tableColNames, cellLoc='center', fontsize='20')
@@ -120,7 +117,8 @@ def plotter(equation1, linps1, equation2, linps2, rawData):
     ax4.axis('off')
     for j, col_label in enumerate(tData[0]):
         table[(0, j)].set_facecolor('lightblue')
-
+    
+    # Determines color depending on which value is closer to actual data
     for i in range(len(tData)):
         if(float(tData[i][3]) < float(tData[i][4])):
             table[(i+1, 3)].set_facecolor('lightgreen')
@@ -129,9 +127,6 @@ def plotter(equation1, linps1, equation2, linps2, rawData):
         elif (float(tData[i][3]) == float(tData[i][4])):
             table[(i+1, 3)].set_facecolor('lightgreen')
             table[(i+1, 4)].set_facecolor('lightgreen')
-  
-
-
 
     plt.show()
 
