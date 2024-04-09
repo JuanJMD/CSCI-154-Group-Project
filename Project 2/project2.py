@@ -101,11 +101,17 @@ def plotter(equation1, linps1, equation2, linps2, rawData):
     # Plots Chart
     fig4 = plt.figure()
     ax4 = fig4.add_subplot(111)
-    tableColNames = ['Malthusian Model', 'Logistic Model', 'Raw Data']
+    tableColNames = ['Malthusian Model', 'Logistic Model', 'Raw Data', 'M - R Diff', 'L - R Diff']
     tData = []
 
+
+
     for i in range(len(rawData)):
-        tData.append([format(equation1[i], '.1f'), format(equation2[i], '.1f'), format(rawData[i], '.1f')])
+        rmDiff = format((float(format(rawData[i], '.1f')) -  float(format(equation1[i], '.1f'))), '.1f')
+        rlDiff = format((float(format(rawData[i], '.1f')) -  float(format(equation2[i], '.1f'))), '.1f')
+
+        tData.append([format(equation1[i], '.1f'), format(equation2[i], '.1f'), format(rawData[i], '.1f'), rmDiff, rlDiff]) 
+
 
     table = ax4.table(cellText=tData, loc='center',
                       colLabels=tableColNames, cellLoc='center', fontsize='20')
@@ -114,6 +120,19 @@ def plotter(equation1, linps1, equation2, linps2, rawData):
     ax4.axis('off')
     for j, col_label in enumerate(tData[0]):
         table[(0, j)].set_facecolor('lightblue')
+
+    for i in range(len(tData)):
+        if(float(tData[i][3]) < float(tData[i][4])):
+            table[(i+1, 3)].set_facecolor('lightgreen')
+        elif (float(tData[i][3]) > float(tData[i][4])):
+            table[(i+1, 4)].set_facecolor('lightgreen')
+        elif (float(tData[i][3]) == float(tData[i][4])):
+            table[(i+1, 3)].set_facecolor('lightgreen')
+            table[(i+1, 4)].set_facecolor('lightgreen')
+  
+
+
+
     plt.show()
 
 
@@ -124,7 +143,6 @@ def main():
 
     birthData = birthData[birthData['Year'].dt.year > 2001]
     deathData = deathData[deathData['Year'].dt.year > 2001]
-
 
     df = pd.read_csv('data/modified/Fresno County Annual Population data.csv', parse_dates=['DATE'])
 
