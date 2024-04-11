@@ -32,7 +32,7 @@ def logistic(rate):
     inclPopulation = (L - initPop) / initPop
     
     container = []
-    xRange = np.arange(0, 41, 1)
+    xRange = np.arange(0, 45, 1)
 
     for i in xRange:
         res = L/(1 + ((inclPopulation) * (math.e)**(-k * (i - x0))))
@@ -48,13 +48,13 @@ def logisticsHumanPop(rate):
 
 def malthusianModel(rate):
     p_0 = 828051
-    t = np.arange(0, 41, 1)
+    t = np.arange(0, 45, 1)
     y = p_0 * (math.e ** (rate * t))
 
     return [y, t]
 
 def plotter(equation1, linps1, equation2, linps2, rawData):
-    xEnd = 40
+    xEnd = 44
 
     # Plots the Malthusian Model
     fig1, ax1 = plt.subplots()
@@ -64,27 +64,29 @@ def plotter(equation1, linps1, equation2, linps2, rawData):
     ax1.set_xlim([0, xEnd])
     ax1.set_xlabel("Years")
     ax1.set_ylabel("Population")
-    ax1.set_xticks(np.linspace(0, 40, 40))
-    ax1.set_xticklabels(np.linspace(2002, 2042, 40, dtype=int), rotation=45)
+    ax1.set_xticks(np.linspace(0, xEnd, xEnd))
+    ax1.set_xticklabels(np.linspace(2002, (2002 + xEnd), xEnd, dtype=int), rotation=45)
 
     # All combined Models
     fig2, ax2 = plt.subplots()
     ax2.plot(linps1, equation1, 'b', label='Malthusian Model')
-
     xPoints = list(range(len(rawData)))
     ax2.scatter(xPoints, rawData, label='Fresno County Annual Population Data')
-
-    # Plots Points with Numerical Value
-    #for i in range(len(xPoints)):
-    #    ax2.annotate((str(xPoints[i]) + ', ' + str(rawData[i])), (xPoints[i], rawData[i]))
-
     ax2.plot(linps2, equation2, 'r', label='Logistic Model')
+    ax2.plot(41, equation1[41], 'o-b')
+    ax2.plot(41, equation2[41], 'o-r')
+    ax2.annotate(("Year " + str(2042) + " = " + str(format(equation1[41], '.1f'))), (41, equation1[41]),
+                 xycoords='data', xytext=(20, 50), textcoords='offset points', arrowprops=dict(facecolor='black', shrink=0.05))
+    ax2.annotate(("Year " + str(2042) + " = " + str(format(equation2[41], '.1f'))), (41, equation2[41]),
+                 xycoords='data', xytext=(20, 50), textcoords='offset points', arrowprops=dict(facecolor='black', shrink=0.05))
+
     ax2.grid(True, linestyle=':')
     ax2.set_xlim([0, xEnd])
     ax2.set_xlabel("Years")
     ax2.set_ylabel("Population")
-    ax2.set_xticks(np.linspace(0, 40, 40))
-    ax2.set_xticklabels(np.linspace(2002, 2042, 40, dtype=int), rotation=45)
+
+    ax2.set_xticks(np.linspace(0, xEnd, xEnd))
+    ax2.set_xticklabels(np.linspace(2002, (2002 + xEnd), xEnd, dtype=int), rotation=45)
     ax2.legend()
 
     # Plots the Logistic Model
@@ -95,36 +97,34 @@ def plotter(equation1, linps1, equation2, linps2, rawData):
     ax3.set_xlim([0, xEnd])
     ax3.set_xlabel("Years")
     ax3.set_ylabel("Population")
-    ax3.set_xticks(np.linspace(0, 40, 40))
-    ax3.set_xticklabels(np.linspace(2002, 2042, 40, dtype=int), rotation=45)
+    ax3.set_xticks(np.linspace(0, xEnd, xEnd))
+    ax3.set_xticklabels(np.linspace(2002, (2002 + xEnd), xEnd, dtype=int), rotation=45)
 
     # Plots Chart
     fig4 = plt.figure()
     ax4 = fig4.add_subplot(111)
-    tableColNames = ['Malthusian Model', 'Logistic Model', 'Raw Data', 'M - R Diff', 'L - R Diff']
+    tableColNames = ['Years', 'Malthusian Model', 'Logistic Model', 'Raw Data', 'M - R Diff', 'L - R Diff']
     tData = []
-
     # Adds data to table
     for i in range(len(rawData)):
         rmDiff = format((float(format(rawData[i], '.1f')) -  float(format(equation1[i], '.1f'))), '.1f')
         rlDiff = format((float(format(rawData[i], '.1f')) -  float(format(equation2[i], '.1f'))), '.1f')
-        tData.append([format(equation1[i], '.1f'), format(equation2[i], '.1f'), format(rawData[i], '.1f'), rmDiff, rlDiff]) 
+        tData.append([(2002 + i), format(equation1[i], '.1f'), format(equation2[i], '.1f'), format(rawData[i], '.1f'), rmDiff, rlDiff])
 
     table = ax4.table(cellText=tData, loc='center',
                       colLabels=tableColNames, cellLoc='center', fontsize='20')
     table.auto_set_font_size(False)
-    #table.set_fontsize(8)  # Adjust font size as needed
     ax4.axis('off')
     for j, col_label in enumerate(tData[0]):
         table[(0, j)].set_facecolor('lightblue')
     
     # Determines color depending on which value is closer to actual data
     for i in range(len(tData)):
-        if(float(tData[i][3]) < float(tData[i][4])):
+        if float(tData[i][3]) < float(tData[i][4]):
             table[(i+1, 3)].set_facecolor('lightgreen')
-        elif (float(tData[i][3]) > float(tData[i][4])):
+        elif float(tData[i][3]) > float(tData[i][4]):
             table[(i+1, 4)].set_facecolor('lightgreen')
-        elif (float(tData[i][3]) == float(tData[i][4])):
+        elif float(tData[i][3]) == float(tData[i][4]):
             table[(i+1, 3)].set_facecolor('lightgreen')
             table[(i+1, 4)].set_facecolor('lightgreen')
 
