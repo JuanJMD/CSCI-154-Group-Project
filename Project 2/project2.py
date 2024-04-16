@@ -20,7 +20,7 @@ def getRate(num, population):
     return averageRate
 
 # Creates Logistic Function
-def logistic(rate):
+def logistic(rate, start, end):
     areaFresno=5958.4
     areaUS=3797000
     USCap = 807000000
@@ -32,7 +32,7 @@ def logistic(rate):
     inclPopulation = (L - initPop) / initPop
     
     container = []
-    xRange = np.arange(0, 45, 1)
+    xRange = np.arange(start, end, 1)
 
     for i in xRange:
         res = L/(1 + ((inclPopulation) * (math.e)**(-k * (i - x0))))
@@ -42,18 +42,18 @@ def logistic(rate):
 # Logistic Function with Human Population
 def logisticsHumanPop(rate):
     # Calculates Logistic Equation
-    [dataResults, xRange] = logistic(rate)
+    [dataResults, xRange] = logistic(rate, 0, 45)
 
     return [dataResults, xRange]
 
-def malthusianModel(rate):
+def malthusianModel(rate, start):
     p_0 = 828051
-    t = np.arange(0, 45, 1)
+    t = np.arange(start, 45, 1)
     y = p_0 * (math.e ** (rate * t))
 
     return [y, t]
 
-def plotter(equation1, linps1, equation2, linps2, rawData):
+def plotter(equation1, linps1, equation2, linps2, rawData, rateVal):
     xEnd = 44
 
     # Plots the Malthusian Model
@@ -128,6 +128,19 @@ def plotter(equation1, linps1, equation2, linps2, rawData):
             table[(i+1, 3)].set_facecolor('lightgreen')
             table[(i+1, 4)].set_facecolor('lightgreen')
 
+    xR = 250
+    [m_eq, m_range] = logistic(rateVal, -(xR), xR)
+
+    fig5, ax5 = plt.subplots()
+    ax5.plot(m_range, m_eq, 'r', label='Logistic Model')
+    ax5.plot(linps1, equation1, 'b', label='Malthusian Model')
+    ax5.set_title("Both Graphs Combined")
+    ax5.grid(True, linestyle=':')
+    ax5.set_xlabel("Years")
+    ax5.set_ylabel("Population")
+    ax5.set_xticks(np.arange(-xR, (xR + 1), 100))
+    ax5.set_xticklabels(np.arange((2002 - xR), (2002 + (xR + 1)), 100, dtype=int), rotation=0)
+    ax5.legend()
     plt.show()
 
 
@@ -162,9 +175,9 @@ def main():
     print('rate:', rateVal)
 
     [l_eq, l_range] = logisticsHumanPop(rateVal)
-    [m_eq, m_range] = malthusianModel(rateVal)
+    [m_eq, m_range] = malthusianModel(rateVal, 0)
 
-    plotter(m_eq, m_range, l_eq, l_range, popValues)
+    plotter(m_eq, m_range, l_eq, l_range, popValues, rateVal)
 
 
 if __name__ == "__main__":
