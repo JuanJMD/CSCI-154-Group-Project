@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import csv
 import pandas as pd
+import plotly.graph_objects as go
 
 def montyHall(numDoors, rule, trial):
     #Create a set of doors by using pre-set number of doors
@@ -64,19 +65,18 @@ def write_and_plot(list1,list2,list3,list4):
 
 
 #Create a bar chart by using the result
-def barChart(list1,list2,list3,list4):
+def barChart(list1,list2):
     fieldNames=['3 doors', '6 doors', '9 doors', '20 doors', '100 doors']
     width = 0.2
     x_list1 = [x-width for x in range(len(list1))]
     x_list2 = [x for x in range(len(list2))]
-    x_list3 = [x+width for x in range (len(list3))]
-    x_list4 = [x+width*2 for x in range (len(list4))]
+    # x_list3 = [x+width for x in range (len(list3))]
+    # x_list4 = [x+width*2 for x in range (len(list4))]
 
     fig,ax = plt.subplots()
     bar1 = ax.bar(x_list1,list1,width,label='Win_Switch')
-    bar2 = ax.bar(x_list2,list2,width,label='Lose_Switch')
-    bar3 = ax.bar(x_list3,list3,width,label='Win_Stay')
-    bar4 = ax.bar(x_list4,list4,width,label='Lose_Stay')    
+    bar2 = ax.bar(x_list2,list2,width,label='Win_Stay')
+   
 
 
     def autolabel(bars, data):
@@ -87,8 +87,8 @@ def barChart(list1,list2,list3,list4):
     #label the bar
     autolabel(bar1,list1)
     autolabel(bar2,list2)
-    autolabel(bar3,list3)
-    autolabel(bar4,list4)
+    # autolabel(bar3,list3)
+    # autolabel(bar4,list4)
 
     x = np.arange(len(fieldNames))
     ax.set_xticks(x)
@@ -112,31 +112,89 @@ def plot_table(fileName):
 
 def print_Result(list1,list2,list3,list4):
     write_and_plot(list1,list2,list3,list4)
-    barChart(list1,list2,list3,list4)
+    barChart(list1,list3)
     plt.show()
 
+def plot_probability_distribution(trial_marks, win_probabilities, num_doors, strategy):
+    # Create the figure object
+    fig = go.Figure()
+
+    last_known_value = 0  # Initialize a fallback last known value
+
+    # Iterate over each door configuration and handle data filling
+    for i, num in enumerate(num_doors):
+        current_data = win_probabilities[i]
+
+        if not current_data:  # If the list is empty
+            if i == 0 or not any(win_probabilities[:i]):  # If it's the first list or all previous lists are empty
+                current_data = [last_known_value] * len(trial_marks)  # Use the initial last known value (0 or updated)
+                print(f"No initial data for {num} doors; using zero or last known non-zero values.")
+            else:
+                # Find the last non-empty list before the current one
+                for prev_data in reversed(win_probabilities[:i]):
+                    if prev_data:
+                        last_known_value = prev_data[-1]
+                        break
+                current_data = [last_known_value] * len(trial_marks)  # Use last known value from the previous non-empty list
+        else:
+            # Update the last known value from the current non-empty list
+            last_known_value = current_data[-1]
+            # Ensure the list covers all trial marks by extending the last known value
+            additional_length = len(trial_marks) - len(current_data)
+            current_data.extend([last_known_value] * additional_length)
+
+        # Add the trace with the adjusted or verified data
+        fig.add_trace(go.Scatter(
+            x=trial_marks, 
+            y=current_data,
+            mode='lines',  # Set mode to lines and markers
+            name=f'{num} doors',
+            #marker=dict(size=0.5, opacity=0.8)
+        ))
+
+    # Update the layout to add titles and axis labels
+    fig.update_layout(
+        title=f'Win Probability Convergence Over Trials - {strategy} Strategy',
+        xaxis_title='Number of Trials',
+        yaxis_title='Win Probability',
+        legend_title='Number of Doors',
+        plot_bgcolor='white'  # Set background color to white for better visibility
+    )
+    
+    # Check if any traces were added to figure
+    if not fig.data:
+        print("No data available to plot after processing.")
+        return  # Exit if no data to plot
+    
+    # Show the figure
+    fig.show()
 
 def main():
     #Number of doors
     numDoors = [3,6,9,20,100]
     #simulation times
     trials = 100000
+    #array for tracing
+    trace1 =[[] for _ in numDoors]
+    trace2 =[[] for _ in numDoors]
     #alway switch probaility
     winProbability1=[]
     loseProbability1=[]
     #always Stay probability
     winProbability2=[]
     loseProbability2 =[]
+    trial_marks = list(range(1, trials + 1))
 
-    for n in numDoors:
-        print(f"Doors = {n}")
+    for index, val in enumerate(numDoors):
+        print(f"Doors = {val}")
         countWin1 = 0
         countLose1 = 0
         #Always Switching Case:
         for x in range(trials):
-            if (montyHall(n, 'switch', x)):
-                #print("Switch")
+            if (montyHall(val, 'switch', x)):
                 countWin1 +=1
+                current_probability = countWin1 / (x + 1)
+                trace1[index].append(current_probability)
             else:
                 countLose1 +=1
         
@@ -152,26 +210,22 @@ def main():
         countWin2 = 0
         countLose2 = 0
         for x in range(trials):
-            if (montyHall(n,'stay',x)):
+            if (montyHall(val,'stay',x)):
                 countWin2 +=1
+                current_probability = countWin2 / (x + 1)
+                trace2[index].append(current_probability)
             else:
                 countLose2 +=1
+        
         winProbability2.append(round(countWin2/trials,3))
         loseProbability2.append(round(countLose2/trials,3))
-        # print("Door number: ", n)
-        # print("Win: ", countWin2)
-        # print("Lose: ", countLose2)
-        # print("Always Staying Win probability: ", countWin2/times)
-        # winProbability2.append( countWin2/times)
-        # loseProbability2.append(countLose2/times)
     
     print(f"{winProbability1=}")
-    print(f"{loseProbability1=}")
     print(f"{winProbability2=}")
-    print(f"{loseProbability2=}")
 
     #print the result
     print_Result(winProbability1,loseProbability1,winProbability2,loseProbability2)
-
+    plot_probability_distribution(trial_marks,trace1,numDoors, 'Switch')
+    plot_probability_distribution(trial_marks,trace2,numDoors, 'Stay')
 if __name__ == "__main__":
     main()
