@@ -1,0 +1,5 @@
+,3 doors,6 doors,9 doors,20 doors,100 doors
+Hall_Win_Switch,0.75,0.86,0.9,0.95,0.99
+Fall_Win_Switch,0.33,0.17,0.11,0.05,0.01
+Hall_Win_Stay,0.25,0.14,0.1,0.05,0.01
+Fall_Win_Stay,0.33,0.17,0.11,0.05,0.01
