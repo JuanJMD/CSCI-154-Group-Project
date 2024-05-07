@@ -197,19 +197,31 @@ def plot_probability_distribution(module, trial_marks, win_probabilities, num_do
             x=trial_marks, 
             y=current_data,
             mode='lines',  # Set mode to lines and markers
-            name=f'{num} doors',
+            name= f'{num} doors'
             #marker=dict(size=0.5, opacity=0.8)
         ))
 
-    # Update the layout to add titles and axis labels
-    fig.update_layout(
-        title=f'{module} Win Probability Convergence Over Trials - {strategy} Strategy',
-        xaxis_title='Number of Trials',
-        yaxis_title='Win Probability',
-        legend_title='Number of Doors',
-        plot_bgcolor='white'  # Set background color to white for better visibility
-    )
-    
+        fig.update_layout(
+            title= dict( text = f'{module} Win Probability Convergence Over Trials - {strategy} Strategy',
+                        font = dict (size = 30, family = "Arial Black")),
+            xaxis_title= dict ( text ='Number of Trials',
+                               font= dict(size = 25, family = "Arial Black")),
+            yaxis_title= dict(text ='Win Probability',
+                              font = dict(size = 25,family = "Arial Black")),
+            legend_title= dict( text ='Number of Doors', font = dict (size = 20)),
+            plot_bgcolor='white',  # Set background color to white for better visibility
+            xaxis=dict(
+                showgrid=True,  # Show gridlines
+                gridwidth=1,  # Set gridline width
+                gridcolor='black'  # Set gridline color to black
+            ),
+            yaxis=dict(
+                showgrid=True,  # Show gridlines
+                gridwidth=1,  # Set gridline width
+                gridcolor='black'  # Set gridline color to black
+            )
+        )
+
     # Check if any traces were added to figure
     if not fig.data:
         print("No data available to plot after processing.")
@@ -310,15 +322,15 @@ def main():
    
 
     #print the result
-    print_Result(winProbability1,winProbability3,winProbability2,winProbability4)
+    # print_Result(winProbability1,winProbability3,winProbability2,winProbability4)
     
     # print(f"{winProbability1=}")
     # print(f"{winProbability2=}")
     # print(f"{winProbability3=}")
     # print(f"{winProbability4=}")
 
-    # plot_probability_distribution("Monty Hall",trial_marks,trace1,numDoors, 'Switch')
-    # plot_probability_distribution("Monty Hall",trial_marks,trace2,numDoors, 'Stay')
+    plot_probability_distribution("Monty Hall",trial_marks,trace1,numDoors, 'Switch')
+    plot_probability_distribution("Monty Hall",trial_marks,trace2,numDoors, 'Stay')
     plot_probability_distribution("Monty Fall",trial_marks,trace3,numDoors, 'Switch')
     plot_probability_distribution("Monty Fall",trial_marks,trace4,numDoors, 'Stay')
 if __name__ == "__main__":
